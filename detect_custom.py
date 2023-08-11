@@ -14,6 +14,9 @@ from utils.general import check_img_size, check_requirements, check_imshow, non_
 from utils.plots import plot_one_box
 from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
+# Custom external import
+import gps
+import database
 
 def detect(save_img=False):
     source, weights, view_img, save_txt, imgsz, trace = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, not opt.no_trace
@@ -24,6 +27,53 @@ def detect(save_img=False):
     # Directories
     save_dir = Path(increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok))  # increment run
     (save_dir / 'labels' if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
+
+    # Made up title :)
+    print("\nYoloV7 Custom Detect File by RoadDEC\n")
+
+    # Create database
+    database_dir = "runs/detect/"
+    database.createConnection(database_dir)
+
+    # Initialize GPS IP Address (belum diimplementasi yang wired)
+    if(opt.gps_connection == "wireless"):
+        ipGPS = input("IP Address (Example: 192.168.1.1) : ")
+        print("\nTesting Connection to GPS...", end=" ")
+
+        gpsCon = gps.GPS()
+        if(gpsCon.getConnectionWireless(ipGPS) == "TrueConnected"):
+            print("GPS Connected")
+        elif(gpsCon.getConnectionWireless(ipGPS) == "FalseConnected"):
+            print("GPS Not Started")
+            continueWithoutGPS = input("Continuing Without GPS? (y/n) : ")
+            if (continueWithoutGPS == "y" or continueWithoutGPS == "yes"):
+                print("Continuing Program Without GPS\n")
+            else:
+                print("Exiting program")
+                exit(1)
+        elif(gpsCon.getConnectionWireless(ipGPS) == "FalseNotConnected"):
+            print("GPS Connection Failed")
+            continueWithoutGPS = input("Continuing Without GPS? (y/n) : ")
+            if (continueWithoutGPS == "y" or continueWithoutGPS == "yes"):
+                print("Continuing Program Without GPS (For Testing Only - Slow Process)\n")
+            else:
+                print("Exiting program")
+                exit(1)
+    elif(opt.gps_connection == "wired"):
+        comGPS = input("Com Port (Example: COM5 (Windows) | dev/tty2) : ")
+        print("\nTesting Connection to GPS...", end=" ")
+
+        gpsCon = gps.GPS()
+        if(gpsCon.getConnectionWired(comGPS)):
+            print("GPS Connected")
+        else:
+            print("GPS Not Started")
+            continueWithoutGPS = input("Continuing Without GPS? (y/n) : ")
+            if (continueWithoutGPS == "y" or continueWithoutGPS == "yes"):
+                print("Continuing Program Without GPS\n")
+            else:
+                print("Exiting program")
+                exit(1)
 
     # Initialize
     set_logging()
@@ -128,6 +178,32 @@ def detect(save_img=False):
                         label = f'{names[int(cls)]} {conf:.2f}'
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
 
+                # Save detection as picture
+                Path(f"{save_dir}/frames/").mkdir(parents=True, exist_ok=True)
+                cv2.imwrite(f"{save_dir}/frames/frame({frame}).jpg", im0)
+
+                # Save detection coordinate to text file (belum diimplementasi yang wired)
+                if(opt.gps_connection == "wireless"):
+                    if(gpsCon.getConnectionWireless(ipGPS) == "TrueConnected"):
+                        with open(f"{save_dir}/GPS.txt", "a") as fGPS:
+                            fGPS.write(f"{gpsCon.getStatusWireless('date')} {gpsCon.getStatusWireless('time')} {gpsCon.getStatusWireless('lng')} {gpsCon.getStatusWireless('lat')}\n")
+                    else:
+                        with open(f"{save_dir}/GPS.txt", "a") as fGPS:
+                            fGPS.write(f"Failed Failed Failed Failed\n")
+                    sqlTask = (gpsCon.getStatusWireless("lng"), gpsCon.getStatusWireless("lat"), f"{save_dir}/frames/frame({frame}).jpg", gpsCon.getStatusWireless("time"), gpsCon.getStatusWireless("date"))
+                elif(opt.gps_connection == "wired"):
+                    if(gpsCon.getConnectionWired(comGPS)):
+                        with open(f"{save_dir}/GPS.txt", "a") as fGPS:
+                            fGPS.write(f"{gpsCon.getStatusWired('date')} {gpsCon.getStatusWired('time')} {gpsCon.getStatusWired('lng')} {gpsCon.getStatusWired('lat')}\n")
+                    else:
+                        with open(f"{save_dir}/GPS.txt", "a") as fGPS:
+                            fGPS.write(f"Failed Failed Failed Failed\n")
+                    sqlTask = (gpsCon.getStatusWired("lng"), gpsCon.getStatusWired("lat"), f"{save_dir}/frames/frame({frame}).jpg", gpsCon.getStatusWired("time"), gpsCon.getStatusWired("date"))
+
+                # Save data to database (belum diimplementasi yang wired)
+                dataConn = database.createConnection(database_dir)
+                database.commitDetection(dataConn, sqlTask)
+
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
 
@@ -183,6 +259,7 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--no-trace', action='store_true', help='don`t trace model')
+    parser.add_argument('--gps-connection', type=str, default='wired', help='gps connection type wired or wireless')
     opt = parser.parse_args()
     print(opt)
     #check_requirements(exclude=('pycocotools', 'thop'))
