@@ -119,55 +119,64 @@ void loop() {
 }
 
 void displayInfo() { // Date Time Latitude Longitude
-  Serial.print(F("Date: "));
+  // Serial.print(F("Date: "));
   if (gps.date.isValid()) {
-    int day = gps.date.day();
-    int month = gps.date.month();
+    // int day = gps.date.day();
+    // int month = gps.date.month();
 
-    Serial.print(day < 10 ? "0" + String(day) : String(day));
-    Serial.print(F("/"));
-    Serial.print(month < 10 ? "0" + String(month) : String(month));
-    Serial.print(F("/"));
-    Serial.print(gps.date.year());
-    Serial.print(F(" "));
+    // Serial.print(day < 10 ? "0" + String(day) : String(day));
+    // Serial.print(F("/"));
+    // Serial.print(month < 10 ? "0" + String(month) : String(month));
+    // Serial.print(F("/"));
+    // Serial.print(gps.date.year());
+    // Serial.print(F(" "));
+
+    Serial.print(gpsDate());
+    Serial.print(" ");
   }
   else {
     Serial.println(F("INVALID"));
   }
 
-  Serial.print(F("Time: "));
+  // Serial.print(F("Time: "));
   if (gps.time.isValid()) {
-    int hour = gps.time.hour();
+    // int hour = gps.time.hour();
 
-    hour = hour + 8;
-    if (hour >= 24 ) {
-      hour = hour - 24;
-    }
+    // hour = hour + 8;
+    // if (hour >= 24 ) {
+    //   hour = hour - 24;
+    // }
 
-    int minute = gps.time.minute();
-    int second = gps.time.second();
+    // int minute = gps.time.minute();
+    // int second = gps.time.second();
 
-    Serial.print(hour < 10 ? "0" + String(hour) : String(hour));
-    Serial.print(F(":"));
-    Serial.print(minute < 10 ? "0" + String(minute) : String(minute));
-    Serial.print(F(":"));
-    Serial.print(second < 10 ? "0" + String(second) : String(second));
-    Serial.print(F(" "));
+    // Serial.print(hour < 10 ? "0" + String(hour) : String(hour));
+    // Serial.print(F(":"));
+    // Serial.print(minute < 10 ? "0" + String(minute) : String(minute));
+    // Serial.print(F(":"));
+    // Serial.print(second < 10 ? "0" + String(second) : String(second));
+    // Serial.print(F(" "));
+
+    Serial.print(gpsTime());
+    Serial.print(" ");
   }
   else {
     Serial.println(F("INVALID"));
   }
 
-  Serial.print(F("Location: "));
+  // Serial.print(F("Location: "));
   if (gps.location.isValid()) {
-    Serial.print("Lat: ");
-    Serial.print(gps.location.lat(), 6);
-    Serial.print(F(", "));
-    Serial.print("Lng: ");
-    Serial.print(gps.location.lng(), 6);
-    Serial.println("");
+    // Serial.print("Lat: ");
+    // Serial.print(gps.location.lat(), 6);
+    Serial.print(gpsLat());
+    Serial.print(" ");
+    // Serial.print(F(", "));
+    // Serial.print("Lng: ");
+    // Serial.print(gps.location.lng(), 6);
+    Serial.print(gpsLng());
+    Serial.println(" ");
   }
   else {
-    Serial.println(F("INVALID"));
+    Serial.println(F("INVALID INVALID"));
   }
 }

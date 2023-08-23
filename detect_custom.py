@@ -40,10 +40,9 @@ def detect(save_img=False):
         ipGPS = input("IP Address (Example: 192.168.1.1) : ")
         print("\nTesting Connection to GPS...", end=" ")
 
-        gpsCon = gps.GPS()
-        if(gpsCon.getConnectionWireless(ipGPS) == "TrueConnected"):
+        if(gps.getStatusWireless(ip=ipGPS)):
             print("GPS Connected")
-        elif(gpsCon.getConnectionWireless(ipGPS) == "FalseConnected"):
+        else:
             print("GPS Not Started")
             continueWithoutGPS = input("Continuing Without GPS? (y/n) : ")
             if (continueWithoutGPS == "y" or continueWithoutGPS == "yes"):
@@ -51,20 +50,12 @@ def detect(save_img=False):
             else:
                 print("Exiting program")
                 exit(1)
-        elif(gpsCon.getConnectionWireless(ipGPS) == "FalseNotConnected"):
-            print("GPS Connection Failed")
-            continueWithoutGPS = input("Continuing Without GPS? (y/n) : ")
-            if (continueWithoutGPS == "y" or continueWithoutGPS == "yes"):
-                print("Continuing Program Without GPS (For Testing Only - Slow Process)\n")
-            else:
-                print("Exiting program")
-                exit(1)
+
     elif(opt.gps_connection == "wired"):
-        comGPS = input("Com Port (Example: COM5 (Windows) | dev/tty2) : ")
+        comGPS = input("Com Port (Example: COM5 [Windows] | dev/tty2 [Linux]) : ")
         print("\nTesting Connection to GPS...", end=" ")
 
-        gpsCon = gps.GPS()
-        if(gpsCon.getConnectionWired(comGPS)):
+        if(gps.getStatusWired(port=comGPS)):
             print("GPS Connected")
         else:
             print("GPS Not Started")
@@ -184,21 +175,21 @@ def detect(save_img=False):
 
                 # Save detection coordinate to text file (belum diimplementasi yang wired)
                 if(opt.gps_connection == "wireless"):
-                    if(gpsCon.getConnectionWireless(ipGPS) == "TrueConnected"):
+                    if(gps.getStatusWireless(ip=ipGPS)):
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
-                            fGPS.write(f"{gpsCon.getStatusWireless('date')} {gpsCon.getStatusWireless('time')} {gpsCon.getStatusWireless('lng')} {gpsCon.getStatusWireless('lat')}\n")
+                            fGPS.write(f"{gps.getStatusWireless('date', ipGPS)} {gps.getStatusWireless('time', ipGPS)} {gps.getStatusWireless('lng', ipGPS)} {gps.getStatusWireless('lat', ipGPS)}\n")
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    sqlTask = (gpsCon.getStatusWireless("lng"), gpsCon.getStatusWireless("lat"), f"{save_dir}/frames/frame({frame}).jpg", gpsCon.getStatusWireless("time"), gpsCon.getStatusWireless("date"))
+                    sqlTask = (gps.getStatusWireless("lng", ipGPS), gps.getStatusWireless("lat", ipGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWireless("time", ipGPS), gps.getStatusWireless("date", ipGPS))
                 elif(opt.gps_connection == "wired"):
-                    if(gpsCon.getConnectionWired(comGPS)):
+                    if(gps.getStatusWired(port=comGPS)):
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
-                            fGPS.write(f"{gpsCon.getStatusWired('date')} {gpsCon.getStatusWired('time')} {gpsCon.getStatusWired('lng')} {gpsCon.getStatusWired('lat')}\n")
+                            fGPS.write(f"{gps.getStatusWired('date', comGPS)} {gps.getStatusWired('time', comGPS)} {gps.getStatusWired('lng', comGPS)} {gps.getStatusWired('lat', comGPS)}\n")
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    sqlTask = (gpsCon.getStatusWired("lng"), gpsCon.getStatusWired("lat"), f"{save_dir}/frames/frame({frame}).jpg", gpsCon.getStatusWired("time"), gpsCon.getStatusWired("date"))
+                    sqlTask = (gps.getStatusWired("lng", comGPS), gps.getStatusWired("lat", comGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWired("time", comGPS), gps.getStatusWired("date", comGPS))
 
                 # Save data to database (belum diimplementasi yang wired)
                 dataConn = database.createConnection(database_dir)
