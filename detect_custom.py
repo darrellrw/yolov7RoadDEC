@@ -35,7 +35,7 @@ def detect(save_img=False):
     # database_dir = "runs/detect/"
     # database.createConnection(database_dir)
 
-    # Initialize GPS IP Address (belum diimplementasi yang wired)
+    # Initialize GPS IP Address
     if(opt.gps_connection == "wireless"):
         ipGPS = input("IP Address (Example: 192.168.1.1) : ")
         print("\nTesting Connection to GPS...", end=" ")
@@ -52,7 +52,7 @@ def detect(save_img=False):
                 exit(1)
 
     elif(opt.gps_connection == "wired"):
-        comGPS = input("Com Port (Example: COM5 [Windows] | dev/tty2 [Linux]) : ")
+        comGPS = input("COM Port (Example: COM5 [Windows] | /dev/ttyUSB0 [Linux]) : ")
         print("\nTesting Connection to GPS...", end=" ")
 
         if(gps.getStatusWired(port=comGPS)):
@@ -196,7 +196,7 @@ def detect(save_img=False):
                      with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                         fGPS.write(f"Failed Failed Failed Failed\n")
 
-                # Save data to database (belum diimplementasi yang wired)
+                # Save data to database
                 # dataConn = database.createConnection(database_dir)
                 # database.commitDetection(dataConn, sqlTask)
 
