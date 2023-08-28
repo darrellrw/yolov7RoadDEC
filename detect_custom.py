@@ -16,7 +16,7 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized,
 
 # Custom external import
 import gps
-import database
+# import database
 
 def detect(save_img=False):
     source, weights, view_img, save_txt, imgsz, trace = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, not opt.no_trace
@@ -32,8 +32,8 @@ def detect(save_img=False):
     print("\nYoloV7 Custom Detect File by RoadDEC\n")
 
     # Create database
-    database_dir = "runs/detect/"
-    database.createConnection(database_dir)
+    # database_dir = "runs/detect/"
+    # database.createConnection(database_dir)
 
     # Initialize GPS IP Address (belum diimplementasi yang wired)
     if(opt.gps_connection == "wireless"):
@@ -65,6 +65,8 @@ def detect(save_img=False):
             else:
                 print("Exiting program")
                 exit(1)
+    elif(opt.gps_connection == "no"):
+        print("No GPS Start")
 
     # Initialize
     set_logging()
@@ -181,7 +183,7 @@ def detect(save_img=False):
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    sqlTask = (gps.getStatusWireless("lng", ipGPS), gps.getStatusWireless("lat", ipGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWireless("time", ipGPS), gps.getStatusWireless("date", ipGPS))
+                    # sqlTask = (gps.getStatusWireless("lng", ipGPS), gps.getStatusWireless("lat", ipGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWireless("time", ipGPS), gps.getStatusWireless("date", ipGPS))
                 elif(opt.gps_connection == "wired"):
                     if(gps.getStatusWired(port=comGPS)):
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
@@ -189,11 +191,14 @@ def detect(save_img=False):
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    sqlTask = (gps.getStatusWired("lng", comGPS), gps.getStatusWired("lat", comGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWired("time", comGPS), gps.getStatusWired("date", comGPS))
+                    # sqlTask = (gps.getStatusWired("lng", comGPS), gps.getStatusWired("lat", comGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWired("time", comGPS), gps.getStatusWired("date", comGPS))
+                elif(opt.gps_connection == "no"):
+                     with open(f"{save_dir}/GPS.txt", "a") as fGPS:
+                        fGPS.write(f"Failed Failed Failed Failed\n")
 
                 # Save data to database (belum diimplementasi yang wired)
-                dataConn = database.createConnection(database_dir)
-                database.commitDetection(dataConn, sqlTask)
+                # dataConn = database.createConnection(database_dir)
+                # database.commitDetection(dataConn, sqlTask)
 
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
@@ -250,7 +255,7 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--no-trace', action='store_true', help='don`t trace model')
-    parser.add_argument('--gps-connection', type=str, default='wired', help='gps connection type wired or wireless')
+    parser.add_argument('--gps-connection', type=str, default='no', help='gps connection type wired or wireless')
     opt = parser.parse_args()
     print(opt)
     #check_requirements(exclude=('pycocotools', 'thop'))
