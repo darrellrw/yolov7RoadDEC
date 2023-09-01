@@ -8,7 +8,7 @@ import torch.backends.cudnn as cudnn
 from numpy import random
 
 from models.experimental import attempt_load
-from utils.datasets import LoadStreams, LoadImages
+from utils.datasets import LoadStreams, LoadImages, LoadStreamsNano
 from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
     scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path
 from utils.plots import plot_one_box
@@ -16,7 +16,7 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized,
 
 # Custom external import
 import gps
-# import database
+import database
 
 def detect(save_img=False):
     source, weights, view_img, save_txt, imgsz, trace = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, not opt.no_trace
@@ -31,13 +31,9 @@ def detect(save_img=False):
     # Made up title :)
     print("\nYoloV7 Custom Detect File by RoadDEC\n")
 
-    # Create database
-    # database_dir = "runs/detect/"
-    # database.createConnection(database_dir)
-
     # Initialize GPS IP Address
     if(opt.gps_connection == "wireless"):
-        ipGPS = input("IP Address (Example: 192.168.1.1) : ")
+        ipGPS = input("GPS IP Address (Example: 192.168.1.1) : ")
         print("\nTesting Connection to GPS...", end=" ")
 
         if(gps.getStatusWireless(ip=ipGPS)):
@@ -92,12 +88,15 @@ def detect(save_img=False):
 
     # Set Dataloader
     vid_path, vid_writer = None, None
-    if webcam:
-        view_img = check_imshow()
-        cudnn.benchmark = True  # set True to speed up constant image size inference
-        dataset = LoadStreams(source, img_size=imgsz, stride=stride)
+    if opt.nano:
+        dataset = LoadStreamsNano(source, img_size=imgsz, stride=stride)
     else:
-        dataset = LoadImages(source, img_size=imgsz, stride=stride)
+        if webcam:
+            view_img = check_imshow()
+            cudnn.benchmark = True  # set True to speed up constant image size inference
+            dataset = LoadStreams(source, img_size=imgsz, stride=stride)
+        else:
+            dataset = LoadImages(source, img_size=imgsz, stride=stride)
 
     # Get names and colors
     names = model.module.names if hasattr(model, 'module') else model.names
@@ -183,7 +182,7 @@ def detect(save_img=False):
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    # sqlTask = (gps.getStatusWireless("lng", ipGPS), gps.getStatusWireless("lat", ipGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWireless("time", ipGPS), gps.getStatusWireless("date", ipGPS))
+                    database.push(gps.getStatusWireless("lat", ipGPS), gps.getStatusWireless("lng", ipGPS), database.upload(f"{save_dir}/frames/frame({frame}).jpg"), gps.getStatusWireless("date", ipGPS), gps.getStatusWireless("time", ipGPS))
                 elif(opt.gps_connection == "wired"):
                     if(gps.getStatusWired(port=comGPS)):
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
@@ -191,14 +190,11 @@ def detect(save_img=False):
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    # sqlTask = (gps.getStatusWired("lng", comGPS), gps.getStatusWired("lat", comGPS), f"{save_dir}/frames/frame({frame}).jpg", gps.getStatusWired("time", comGPS), gps.getStatusWired("date", comGPS))
+                    database.push(gps.getStatusWireless("lat", comGPS), gps.getStatusWireless("lng", comGPS), database.upload(f"{save_dir}/frames/frame({frame}).jpg"), gps.getStatusWireless("date", comGPS), gps.getStatusWireless("time", comGPS))
                 elif(opt.gps_connection == "no"):
-                     with open(f"{save_dir}/GPS.txt", "a") as fGPS:
+                    with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                         fGPS.write(f"Failed Failed Failed Failed\n")
-
-                # Save data to database
-                # dataConn = database.createConnection(database_dir)
-                # database.commitDetection(dataConn, sqlTask)
+                    database.push("116.866379", "-1.141511", database.upload(f"{save_dir}/frames/frame({frame}).jpg"), "test", "test")
 
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
@@ -256,6 +252,7 @@ if __name__ == '__main__':
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--no-trace', action='store_true', help='don`t trace model')
     parser.add_argument('--gps-connection', type=str, default='no', help='gps connection type wired or wireless')
+    parser.add_argument('--nano', type=bool, default=False, help='jetson camera')
     opt = parser.parse_args()
     print(opt)
     #check_requirements(exclude=('pycocotools', 'thop'))

@@ -1,34 +1,18 @@
-import sqlite3
+import firebase_admin
+from firebase_admin import credentials, firestore, storage
 
-def createDatabase(dir):
-    conn = None
-    try:
-        conn = sqlite3.connect(f"{dir}/tracking.db")
-    except sqlite3.Error as e:
-        print(e)
-    cur = conn.cursor()
-    cur.execute(''' CREATE TABLE IF NOT EXISTS detections ([id] INTEGER PRIMARY KEY AUTOINCREMENT, [longitude] REAL, [latitude] REAL, [path] TEXT, [time] TEXT, [date] TEXT) ''')
-    conn.commit()
-    return cur.lastrowid
+cred = credentials.Certificate("serviceAccountKey.json")
+firebase_admin.initialize_app(cred, {'storageBucket': 'roadeh-f6915.appspot.com'})
 
-def createConnection(dir):
-    conn = None
-    try:
-        conn = sqlite3.connect(f"{dir}/tracking.db")
-    except sqlite3.Error as e:
-        print(e)
-    return conn
+def push(ltd, lng, path, date, time):
+    db = firestore.client()
+    db.collection("detections").add({"latitude": ltd, "longitude": lng, "path": path, "date": date, "time": time})
 
-def commitDetection(conn, detection):
-    sqlCommit = ''' INSERT INTO detections(longitude, latitude, path, time, date) VALUES(?, ?, ?, ?, ?) '''
-    cur = conn.cursor()
-    cur.execute(sqlCommit, detection)
-    conn.commit()
-    return cur.lastrowid
+def upload(fileName):
+    bucket = storage.bucket()
+    blob = bucket.blob(fileName)
+    blob.upload_from_filename(fileName)
 
-def queryTable(conn, table):
-    cur = conn.cursor()
-    cur.execute(f"SELECT * FROM {table}")
-    rows = cur.fetchall()
-    for row in rows:
-        print(row)
+    blob.make_public()
+
+    return blob.public_url

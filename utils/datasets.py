@@ -1318,3 +1318,44 @@ def load_segmentations(self, index):
     #print(key)
     # /work/handsomejw66/coco17/
     return self.segs[key]
+
+class LoadStreamsNano:  # multiple IP or RTSP cameras
+    def __init__(self, sources='streams.txt', img_size=640, stride=32):
+        self.mode = 'stream'
+        self.img_size = img_size
+        self.stride = stride
+
+        if os.path.isfile(sources):
+            with open(sources, 'r') as f:
+                sources = [x.strip() for x in f.read().strip().splitlines() if len(x.strip())]
+        else:
+            sources = [sources]
+
+        n = len(sources)
+        self.imgs = [None] * n
+        self.sources = [clean_str(x) for x in sources]  # clean source names for later
+        for i, s in enumerate(sources):
+            # Start the thread to read frames from the video stream
+            print(f'{i + 1}/{n}: {s}... ', end='')
+            url = eval(s) if s.isnumeric() else s
+            if 'youtube.com/' in str(url) or 'youtu.be/' in str(url):  # if source is YouTube video
+                check_requirements(('pafy', 'youtube_dl'))
+                import pafy
+                url = pafy.new(url).getbest(preftype="mp4").url
+            cap = cv2.VideoCapture(f"rtspsrc location={url} ! rtph264depay ! h264parse ! omxh264dec ! videorate ! videoscale ! video/x-raw, width=(int){img_size}, height=(int){img_size}, framerate=(fraction){30}/1 ! videoconvert ! video/x-raw, format=BGR ! appsink")
+            assert cap.isOpened(), f'Failed to open {s}'
+            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            self.fps = cap.get(cv2.CAP_PROP_FPS) % 100
+
+            _, self.imgs[i] = cap.read()  # guarantee first frame
+            thread = Thread(target=self.update, args=([i, cap]), daemon=True)
+            print(f' success ({w}x{h} at {self.fps:.2f} FPS).')
+            thread.start()
+        print('')  # newline
+
+        # check for common shapes
+        s = np.stack([letterbox(x, self.img_size, stride=self.stride)[0].shape for x in self.imgs], 0)  # shapes
+        self.rect = np.unique(s, axis=0).shape[0] == 1  # rect inference if all shapes equal
+        if not self.rect:
+            print('WARNING: Different stream shapes detected. For optimal performance supply similarly-shaped streams.')
