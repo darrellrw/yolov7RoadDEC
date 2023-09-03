@@ -35,6 +35,7 @@ def detect(save_img=False):
         # Initialize GPS IP Address
         if(opt.gps_connection == "wireless"):
             ipGPS = input("GPS IP Address (Example: 192.168.1.1) : ")
+            baud = input("Insert GPS Baudrate (9600 | 115200) : ")
             print("\nTesting Connection to GPS...", end=" ")
 
             if(gps.getStatusWireless(ip=ipGPS)):
@@ -52,7 +53,7 @@ def detect(save_img=False):
             comGPS = input("COM Port (Example: COM5 [Windows] | /dev/ttyUSB0 [Linux]) : ")
             print("\nTesting Connection to GPS...", end=" ")
 
-            if(gps.getStatusWired(port=comGPS)):
+            if(gps.getStatusWired(port=comGPS, baud=baud)):
                 print("GPS Connected")
             else:
                 print("GPS Not Started")
@@ -184,9 +185,9 @@ def detect(save_img=False):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
                                 fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                     elif(opt.gps_connection == "wired"):
-                        if(gps.getStatusWired(port=comGPS)):
+                        if(gps.getStatusWired(port=comGPS, baud=baud)):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"{gps.getStatusWired('date', comGPS)},{gps.getStatusWired('time', comGPS)},{gps.getStatusWired('lng', comGPS)},{gps.getStatusWired('lat', comGPS)},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"{gps.getStatusWired('date', comGPS, baud=baud)},{gps.getStatusWired('time', comGPS, baud=baud)},{gps.getStatusWired('lng', comGPS, baud=baud)},{gps.getStatusWired('lat', comGPS, baud=baud)},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                         else:
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
                                 fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")

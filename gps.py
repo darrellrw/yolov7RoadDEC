@@ -21,9 +21,9 @@ def getStatusWireless(status = "connection", ip = ""):
     except:
         return False
 
-def getStatusWired(status = "connection", port = ""):
+def getStatusWired(status = "connection", port = "/dev/ttyUSB0", baud = "9600"):
     try:
-        ser = serial.Serial(port = port, baudrate = 115200, timeout = 1)
+        ser = serial.Serial(port = port, baudrate = baud, timeout = 1)
         time.sleep(3)
         if(ser):
             value = str(ser.readline().decode("UTF-8").strip())
