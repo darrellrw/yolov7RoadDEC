@@ -230,10 +230,12 @@ def detect(save_img=False):
         print(f'Done. ({time.time() - t0:.3f}s)')
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
             print("Uploading data to firebase...")
             subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
             exit()
     except KeyboardInterrupt:
+        cv2.destroyAllWindows()
         print("Uploading data to firebase...")
         subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
         exit()
