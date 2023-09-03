@@ -35,7 +35,6 @@ def detect(save_img=False):
         # Initialize GPS IP Address
         if(opt.gps_connection == "wireless"):
             ipGPS = input("GPS IP Address (Example: 192.168.1.1) : ")
-            baud = input("Insert GPS Baudrate (9600 | 115200) : ")
             print("\nTesting Connection to GPS...", end=" ")
 
             if(gps.getStatusWireless(ip=ipGPS)):
@@ -51,6 +50,7 @@ def detect(save_img=False):
 
         elif(opt.gps_connection == "wired"):
             comGPS = input("COM Port (Example: COM5 [Windows] | /dev/ttyUSB0 [Linux]) : ")
+            baud = input("Insert GPS Baudrate (9600 | 115200) : ")
             print("\nTesting Connection to GPS...", end=" ")
 
             if(gps.getStatusWired(port=comGPS, baud=baud)):
