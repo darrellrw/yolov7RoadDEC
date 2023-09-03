@@ -173,11 +173,7 @@ def detect(save_img=False):
                 # Save detection as picture
                 Path(f"{save_dir}/frames/").mkdir(parents=True, exist_ok=True)
                 cv2.imwrite(f"{save_dir}/frames/frame({frame}).jpg", im0)
-                subprocess.run(f"/usr/bin/python3.8 database.py --upload --fileName {save_dir}/frames/frame({frame}).jpg")
-
-                # https://storage.googleapis.com/roadeh-f6915.appspot.com/runs%5Cdetect%5Cexp14/frames/frame%285%29.jpg
-
-                n_save_dir = save_dir.replace("\\", "%5C")
+                subprocess.run(f"/usr/bin/python3.8 database.py --upload --fileName '{save_dir}/frames/frame({frame}).jpg'", shell=True)
 
                 # Save detection coordinate to text file (belum diimplementasi yang wired)
                 if(opt.gps_connection == "wireless"):
@@ -187,8 +183,7 @@ def detect(save_img=False):
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    # database.push(gps.getStatusWireless("lat", ipGPS), gps.getStatusWireless("lng", ipGPS), database.upload(f"{save_dir}/frames/frame({frame}).jpg"), gps.getStatusWireless("date", ipGPS), gps.getStatusWireless("time", ipGPS))
-                    subprocess.run(f"/usr/bin/python3.8 database.py --push --ltd {gps.getStatusWireless('lat', ipGPS)} --lng {gps.getStatusWireless('lng', ipGPS)} --path https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame({frame}).jpg --date {gps.getStatusWireless('date', ipGPS)} --time {gps.getStatusWireless('time', ipGPS)} --push")
+                    subprocess.run(f"/usr/bin/python3.8 database.py --ltd {gps.getStatusWireless('lat', ipGPS)} --lng {gps.getStatusWireless('lng', ipGPS)} --path https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg --date {gps.getStatusWireless('date', ipGPS)} --time {gps.getStatusWireless('time', ipGPS)} --push", shell=True)
                 elif(opt.gps_connection == "wired"):
                     if(gps.getStatusWired(port=comGPS)):
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
@@ -196,13 +191,11 @@ def detect(save_img=False):
                     else:
                         with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                             fGPS.write(f"Failed Failed Failed Failed\n")
-                    # database.push(gps.getStatusWireless("lat", comGPS), gps.getStatusWireless("lng", comGPS), database.upload(f"{save_dir}/frames/frame({frame}).jpg"), gps.getStatusWireless("date", comGPS), gps.getStatusWireless("time", comGPS))
-                    subprocess.run(f"/usr/bin/python3.8 database.py --push --ltd {gps.getStatusWireless('lat', comGPS)} --lng {gps.getStatusWireless('lng', comGPS)} --path https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame({frame}).jpg --date {gps.getStatusWireless('date', comGPS)} --time {gps.getStatusWireless('time', comGPS)} --push")
+                    subprocess.run(f"/usr/bin/python3.8 database.py --ltd {gps.getStatusWireless('lat', comGPS)} --lng {gps.getStatusWireless('lng', comGPS)} --path https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg --date {gps.getStatusWireless('date', comGPS)} --time {gps.getStatusWireless('time', comGPS)} --push", shell=True)
                 elif(opt.gps_connection == "no"):
                     with open(f"{save_dir}/GPS.txt", "a") as fGPS:
                         fGPS.write(f"Failed Failed Failed Failed\n")
-                    # database.push("116.866379", "-1.141511", database.upload(f"{save_dir}/frames/frame({frame}).jpg"), "test", "test")
-                    subprocess.run(f"/usr/bin/python3.8 database.py --push --ltd {116.866379} --lng {-1.141511} --path https://storage.googleapis.com/roadeh-f6915.appspot.com/{n_save_dir}/frames/frame%28{frame}%29.jpg --date test --time test --push")
+                    subprocess.run(f"/usr/bin/python3.8 database.py --ltd {116.866379} --lng {-1.141511} --path https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg --date test --time test --push", shell=True)
 
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
