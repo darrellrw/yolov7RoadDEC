@@ -1,32 +1,19 @@
 import firebase_admin
 from firebase_admin import credentials, firestore, storage
 
-import argparse
+import csv
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {'storageBucket': 'roadeh-f6915.appspot.com'})
 
-def run():
-    if opt.push:
-        db = firestore.client()
-        db.collection("detections").add({"latitude": opt.ltd, "longitude": opt.lng, "path": opt.path, "date": opt.date, "time": opt.time})
+with open("GPS.csv", "r") as file:
+    csvreader = csv.reader(file)
+    for row in csvreader:
 
-    if opt.upload:
         bucket = storage.bucket()
-        blob = bucket.blob(opt.fileName)
-        blob.upload_from_filename(opt.fileName)
-
+        blob = bucket.blob(row[5])
+        blob.upload_from_filename(row[5])
         blob.make_public()
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--ltd', type=str, default='test')
-    parser.add_argument('--lng', type=str, default='test')
-    parser.add_argument('--path', type=str, default='test')
-    parser.add_argument('--date', type=str, default='test')
-    parser.add_argument('--time', type=str, default='test')
-    parser.add_argument('--fileName', type=str, default='test')
-    parser.add_argument('--push', action='store_true', help='push data to firebase')
-    parser.add_argument('--upload', action='store_true', help='upload imgae to firebase storage')
-    opt = parser.parse_args()
-    run()
+        db = firestore.client()
+        db.collection("detections").add({"latitude": row[3], "longitude": row[2], "path": row[4], "date": row[0], "time": row[1]})
