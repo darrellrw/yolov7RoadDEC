@@ -10,7 +10,6 @@ def run():
     if opt.push:
         db = firestore.client()
         db.collection("detections").add({"latitude": opt.ltd, "longitude": opt.lng, "path": opt.path, "date": opt.date, "time": opt.time})
-        print("Hallo")
 
     if opt.upload:
         bucket = storage.bucket()
@@ -18,8 +17,6 @@ def run():
         blob.upload_from_filename(opt.fileName)
 
         blob.make_public()
-
-        print(blob.public_url)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -32,4 +29,4 @@ if __name__ == '__main__':
     parser.add_argument('--push', action='store_true', help='push data to firebase')
     parser.add_argument('--upload', action='store_true', help='upload imgae to firebase storage')
     opt = parser.parse_args()
-    print(opt)
+    run()
