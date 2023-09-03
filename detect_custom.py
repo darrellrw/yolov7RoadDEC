@@ -34,10 +34,12 @@ def detect(save_img=False):
 
         # Initialize GPS IP Address
         if(opt.gps_connection == "wireless"):
+            wireless = gps.Wireless()
+
             ipGPS = input("GPS IP Address (Example: 192.168.1.1) : ")
             print("\nTesting Connection to GPS...", end=" ")
 
-            if(gps.getStatusWireless(ip=ipGPS)):
+            if(wireless.getStatusWireless(ip=ipGPS)):
                 print("GPS Connected")
             else:
                 print("GPS Not Started")
@@ -49,11 +51,14 @@ def detect(save_img=False):
                     exit(1)
 
         elif(opt.gps_connection == "wired"):
+
             comGPS = input("COM Port (Example: COM5 [Windows] | /dev/ttyUSB0 [Linux]) : ")
             baud = input("Insert GPS Baudrate (9600 | 115200) : ")
-            print("\nTesting Connection to GPS...", end=" ")
+            print("\nTesting Connection to GPS...", end=" ")\
+            
+            wired = gps.Wired(comGPS, baud)
 
-            if(gps.getStatusWired(port=comGPS, baud=baud)):
+            if(wired.getStatusWired("connection")):
                 print("GPS Connected")
             else:
                 print("GPS Not Started")
@@ -178,16 +183,16 @@ def detect(save_img=False):
 
                     # Save detection coordinate to text file (belum diimplementasi yang wired)
                     if(opt.gps_connection == "wireless"):
-                        if(gps.getStatusWireless(ip=ipGPS)):
+                        if(wireless.getStatusWireless("connection")):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"{gps.getStatusWireless('date', ipGPS)},{gps.getStatusWireless('time', ipGPS)},{gps.getStatusWireless('lng', ipGPS)},{gps.getStatusWireless('lat', ipGPS)},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"{wireless.getStatusWireless('date')},{wireless.getStatusWireless('time')},{wireless.getStatusWireless('lng')},{wireless.getStatusWireless('lat')},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                         else:
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
                                 fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                     elif(opt.gps_connection == "wired"):
-                        if(gps.getStatusWired(port=comGPS, baud=baud)):
+                        if(wired.getStatusWired(port=comGPS, baud=baud)):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"{gps.getStatusWired('date', comGPS, baud=baud)},{gps.getStatusWired('time', comGPS, baud=baud)},{gps.getStatusWired('lng', comGPS, baud=baud)},{gps.getStatusWired('lat', comGPS, baud=baud)},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"{wired.getStatusWired('date')},{wired.getStatusWired('time')},{wired.getStatusWired('lng')},{wired.getStatusWired('lat')},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                         else:
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
                                 fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
