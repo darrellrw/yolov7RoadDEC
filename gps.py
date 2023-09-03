@@ -31,16 +31,12 @@ def getStatusWired(status = "connection", port = ""):
             if (status == "connection"):
                 return True
             elif (status == "lat"):
-                ser.write(b"lat")
                 return splitedValue[2]
             elif (status == "lng"):
-                ser.write(b"lng")
                 return splitedValue[3]
             elif (status == "date"):
-                ser.write(b"date")
                 return splitedValue[0]
             elif (status == "time"):
-                ser.write(b"time")
                 return splitedValue[1]
             else:
                 return False
