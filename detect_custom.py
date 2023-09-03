@@ -226,7 +226,7 @@ def detect(save_img=False):
                     vid_writer.write(im0)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("Uploading data to firebase...")
-            subprocess.run("/usr/bin/python3.8 database.py", shell=True)
+            subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
             break
     
     if save_txt or save_img:
