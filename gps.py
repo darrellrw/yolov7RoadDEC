@@ -45,9 +45,7 @@ def getStatusWired(status = "connection", port = ""):
             else:
                 return False
         else:
-            match status:
-                case "connection":
-                    return False
+            return False
     except:
         return False
 

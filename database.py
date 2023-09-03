@@ -33,7 +33,3 @@ if __name__ == '__main__':
     parser.add_argument('--upload', action='store_true', help='upload imgae to firebase storage')
     opt = parser.parse_args()
     print(opt)
-
-import subprocess
-
-subprocess.run("C:\Program Files (x64)\Python\Python310\python.exe --version")
