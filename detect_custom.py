@@ -190,7 +190,7 @@ def detect(save_img=False):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
                                 fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                     elif(opt.gps_connection == "wired"):
-                        if(wired.getStatusWired(port=comGPS, baud=baud)):
+                        if(wired.getStatusWired("connection")):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
                                 fGPS.write(f"{wired.getStatusWired('date')},{wired.getStatusWired('time')},{wired.getStatusWired('lng')},{wired.getStatusWired('lat')},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                         else:
