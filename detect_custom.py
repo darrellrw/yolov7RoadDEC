@@ -234,9 +234,15 @@ def detect(save_img=False):
                     del(stride)
                     del(imgsz)
                     del(pred)
-                    print("Uploading data to firebase...")
-                    subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
-                    exit()
+                    print("GPS Not Started")
+                    uplaodNow = input("Upload Now? (y/n) : ")
+                    if (uplaodNow == "y" or uplaodNow == "yes"):
+                        print("Uploading data to firebase...")
+                        subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
+                    else:
+                        print("Exiting program")
+                        exit(1)
+                    exit(1)
         
         if save_txt or save_img:
             s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
@@ -249,9 +255,15 @@ def detect(save_img=False):
         del(stride)
         del(imgsz)
         del(pred)
-        print("Uploading data to firebase...")
-        subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
-        exit()
+        print("GPS Not Started")
+        uplaodNow = input("Upload Now? (y/n) : ")
+        if (uplaodNow == "y" or uplaodNow == "yes"):
+            print("Uploading data to firebase...")
+            subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
+        else:
+            print("Exiting program")
+            exit(1)
+        exit(1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
