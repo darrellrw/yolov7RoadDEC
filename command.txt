@@ -1,0 +1,5 @@
+Detection:
+    python3 detect_custom.py --weights test/best-one-tiny.pt --conf 0.52 --img-size 640 --source rtsp://admin:IAAQXD@192.168.1.120/Streaming/Channels/102 --view-log --no-trace --save-txt --gps-connection "wired"
+
+Upload:
+    python3.8 database.py --path "runs/detect/exp/GPS.csv"

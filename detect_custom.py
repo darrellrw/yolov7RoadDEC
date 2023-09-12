@@ -239,7 +239,9 @@ def detect(save_img=False):
                     if (uplaodNow == "y" or uplaodNow == "yes"):
                         print("Uploading data to firebase...")
                         subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
+                        print(f"Path: {save_dir}")
                     else:
+                        print(f"Path: {save_dir}")
                         print("Exiting program")
                         exit(1)
                     exit(1)
@@ -260,7 +262,9 @@ def detect(save_img=False):
         if (uplaodNow == "y" or uplaodNow == "yes"):
             print("Uploading data to firebase...")
             subprocess.run(f"/usr/bin/python3.8 database.py --path '{save_dir}/GPS.csv'", shell=True)
+            print(f"Path: {save_dir}")
         else:
+            print(f"Path: {save_dir}")
             print("Exiting program")
             exit(1)
         exit(1)
