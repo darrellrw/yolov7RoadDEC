@@ -185,20 +185,20 @@ def detect(save_img=False):
                     if(opt.gps_connection == "wireless"):
                         if(wireless.getStatusWireless("connection")):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"{wireless.getStatusWireless('date')},{wireless.getStatusWireless('time')},{wireless.getStatusWireless('lng')},{wireless.getStatusWireless('lat')},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"{wireless.getStatusWireless('date')},{wireless.getStatusWireless('time')},{wireless.getStatusWireless('lng')},{wireless.getStatusWireless('lat')},https://storage.googleapis.com/roadeh-a2f21.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                         else:
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-a2f21.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                     elif(opt.gps_connection == "wired"):
                         if(wired.getStatusWired("connection")):
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"{wired.getStatusWired('date')},{wired.getStatusWired('time')},{wired.getStatusWired('lng')},{wired.getStatusWired('lat')},https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"{wired.getStatusWired('date')},{wired.getStatusWired('time')},{wired.getStatusWired('lng')},{wired.getStatusWired('lat')},https://storage.googleapis.com/roadeh-a2f21.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                         else:
                             with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                                fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                                fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-a2f21.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
                     elif(opt.gps_connection == "no"):
                         with open(f"{save_dir}/GPS.csv", "a") as fGPS:
-                            fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-f6915.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
+                            fGPS.write(f"Failed,Failed,Failed,Failed,https://storage.googleapis.com/roadeh-a2f21.appspot.com/{save_dir}/frames/frame%28{frame}%29.jpg,{save_dir}/frames/frame({frame}).jpg\n")
 
                 # Print time (inference + NMS)
                 print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')

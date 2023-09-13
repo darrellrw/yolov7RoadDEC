@@ -26,7 +26,7 @@ void getGPS() {
     Serial.println("Dead");
   }
   while(!sim808.getGPS()) {
-    
+
   }
   Serial.print(getDate());
   Serial.print(" ");
