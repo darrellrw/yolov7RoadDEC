@@ -5,7 +5,7 @@ import csv
 import argparse
 
 cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred, {'storageBucket': 'roadeh-f6915.appspot.com'})
+firebase_admin.initialize_app(cred, {'storageBucket': 'roadeh-a2f21.appspot.com'})
 
 def run():
     with open(opt.path, "r") as file:
